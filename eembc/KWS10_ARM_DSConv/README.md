@@ -8,3 +8,9 @@
     * Front-end: [https://github.com/tensorflow/tensorflow/tree/master/tensorflow/lite/experimental/microfrontend](https://github.com/tensorflow/tensorflow/tree/master/tensorflow/lite/experimental/microfrontend)
     * Configuration: window=30ms, stride=20ms, bins=10, Upper frequency limit=4KHz
 
+# Performance
+* Accuracy
+    * 93.5%
+* AUC
+    * .998
+
