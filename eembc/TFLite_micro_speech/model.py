@@ -24,4 +24,3 @@ def micro_speech_eembc():
 		activation='softmax'))
 	return model
 
-m = micro_speech_eembc()
