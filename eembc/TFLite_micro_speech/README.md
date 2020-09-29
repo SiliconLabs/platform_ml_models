@@ -5,6 +5,8 @@
 * Model Topology & Training
     * [TensorFlow Lite Micro README.md](https://github.com/tensorflow/tensorflow/tree/master/tensorflow/lite/micro/examples/micro_speech/train)
     * [Training Instructions](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/lite/micro/examples/micro_speech/train/train_micro_speech_model.ipynb)
+* Trained Models
+    * See the "trained_models" folder here. This is an exact duplicate of the 2020/04/13 models from TFLite.
 
 # Performance
 * Accuracy
