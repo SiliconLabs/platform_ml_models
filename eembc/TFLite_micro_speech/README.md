@@ -10,7 +10,9 @@
 
 # Performance
 * Accuracy
-    * TBD
+    * 93.7%
 * AUC
-    * TBD
+    * .993
+* NOTE
+    * Performance is somewhat sensitive to the exact process of spectrogram generation. We may need to precisely define that.
 
