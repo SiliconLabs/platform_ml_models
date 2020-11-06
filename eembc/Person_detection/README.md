@@ -12,6 +12,34 @@
     * Based on [https://github.com/tensorflow/models/blob/master/research/slim/nets/mobilenet_v1.md](https://github.com/tensorflow/models/blob/master/research/slim/nets/mobilenet_v1.md)
         * Chosen configuration is a MobileNet_v1_0.25_96
 
+# Training details
+``` python
+#learning rate schedule
+epochs = 50
+def lr_schedule(epoch):
+    lrate = 0.001
+    if epoch > 20:
+        lrate = 0.0005
+    if epoch > 30:
+        lrate = 0.00025
+    return lrate
+
+#optimizer
+optimizer = tf.keras.optimizers.Adam()
+batch_size = 50 
+validation_split = 0.1
+
+#define data generator
+datagen = ImageDataGenerator(
+    rotation_range=10,
+    width_shift_range=0.05,
+    height_shift_range=0.05,
+    zoom_range=.1,
+    horizontal_flip=True,
+    validation_split=validation_split
+)
+```
+
 # Performance
 * Accuracy
     * 85.4%
