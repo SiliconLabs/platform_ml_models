@@ -8,7 +8,7 @@
 * Trained Models
     * See the "trained_models" folder here. This is an exact duplicate of the 2020/04/13 models from TFLite.
 
-# Performance
+# Performance (floating point model)
 * Accuracy
     * 93.7%
 * AUC
@@ -16,3 +16,8 @@
 * NOTE
     * Performance is somewhat sensitive to the exact process of spectrogram generation. We may need to precisely define that.
 
+# Performance (quantized tflite model)
+* Accuracy
+    * 93.1%
+* AUC
+    * .992

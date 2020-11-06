@@ -40,9 +40,14 @@ datagen = ImageDataGenerator(
 )
 ```
 
-# Performance
+# Performance (floating point model) 
 * Accuracy
     * 85.4%
 * AUC
     * .931
 
+# Performance (quantized tflite model) 
+* Accuracy
+    * 85.0%
+* AUC
+    * .928

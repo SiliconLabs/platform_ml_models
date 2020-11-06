@@ -8,9 +8,14 @@
     * Front-end: [https://github.com/tensorflow/tensorflow/tree/master/tensorflow/lite/experimental/microfrontend](https://github.com/tensorflow/tensorflow/tree/master/tensorflow/lite/experimental/microfrontend)
     * Configuration: window=30ms, stride=20ms, bins=10, Upper frequency limit=4KHz
 
-# Performance
+# Performance (floating point model)
 * Accuracy
-    * 93.5%
+    * 94.3%
 * AUC
     * .998
 
+# Performance (quantized tflite model)
+* Accuracy
+    * 94.3%
+* AUC
+    * .997
