@@ -3,9 +3,10 @@
     * MSCOCO14 based [https://cocodataset.org/#download]
     * Extraction based on COCO API [https://github.com/cocodataset/cocoapi]
     * Person mimimal bounding box 2.5%
-    * 96x96 images resized with bilinear scaling, no aspect ratio preservation
+    * 96x96 images resized with antialias filtering, no aspect ratio preservation
     * All images converted to RGB
     * Training and validation sets combined
+    * Dataset generation script (buildPersonDetectionDatabase.py) is included in repo
 * Extracted Reference Dataset
    * [vw_coco2014_96.tar.gz](https://www.silabs.com/public/files/github/machine_learning/benchmarks/datasets/vw_coco2014_96.tar.gz)
 * Model Topology
