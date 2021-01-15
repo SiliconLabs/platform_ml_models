@@ -25,8 +25,7 @@ datagen = ImageDataGenerator(
     height_shift_range=0.1,
     horizontal_flip=True,
     #brightness_range=(0.9, 1.2),
-    #contrast_range=(0.9, 1.2),
-    validation_split=validation_split    
+    #contrast_range=(0.9, 1.2)
 )
 ```
     

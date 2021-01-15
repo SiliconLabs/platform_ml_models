@@ -170,7 +170,6 @@ def calculate_ae_pr_accuracy(y_pred, y_true):
 # Autoencoder ROC AUC calculation
 # y_pred contains the outputs of the network for the validation data
 # y_true are the correct answers (0.0 for normal, 1.0 for anomaly)
-# this is the function that should be used for accuracy calculations
 # name is the model's name
 def calculate_ae_auc(y_pred, y_true, name):
   # initialize all arrays
@@ -213,3 +212,37 @@ def calculate_ae_auc(y_pred, y_true, name):
   plt.show(block=False)   
 
   return roc_auc
+
+# Confusion matrix calculation and display
+# y_pred contains the outputs of the network for the validation data
+# y_true are the correct answers (0.0 for normal, 1.0 for anomaly)
+# classes are the class names to be displayed in CM
+# name is the model's name
+from sklearn.metrics import confusion_matrix
+
+def calculate_cm(y_pred, y_true, classes, name):
+  cm = confusion_matrix(y_true, np.argmax(y_pred,axis=1))
+  fig, ax = plt.subplots(figsize=(6,6))
+  im = ax.imshow(cm)
+
+  # We want to show all ticks
+  ax.set_xticks(np.arange(len(classes)))
+  ax.set_yticks(np.arange(len(classes)))
+  # ... and label them with the respective list entries
+  ax.set_xticklabels(classes)
+  ax.set_yticklabels(classes)
+
+  # Rotate the tick labels and set their alignment.
+  plt.setp(ax.get_xticklabels(), rotation=45, ha="right",
+              rotation_mode="anchor")
+
+  # Loop over data dimensions and create text annotations.
+  for i in range(len(classes)):
+      for j in range(len(classes)):
+          text = ax.text(j, i, cm[i, j],
+                          ha="center", va="center", color="w", backgroundcolor=(0.41, 0.41, 0.41, 0.25))
+
+  ax.set_ylabel('Actual class')
+  ax.set_xlabel('Predicted class')
+  plt.title('Confusion Matrix: ' + name)
+  plt.show(block=False)
