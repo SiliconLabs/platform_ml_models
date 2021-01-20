@@ -4,14 +4,10 @@ import tensorflow as tf
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Input, Dense, Activation, Flatten, BatchNormalization
 from tensorflow.keras.layers import Conv2D, AveragePooling2D, MaxPooling2D
-from tensorflow.keras.regularizers import l2
+from tensorflow.keras.regularizers import l1_l2
 
 #define model
-def resnet_v1_eembc():
-    # Resnet parameters
-    input_shape=[32,32,3] # default size for cifar10
-    num_classes=10 # default class number for cifar10
-    num_filters = 16 # this should be 64 for an official resnet model
+def resnet_v1_eembc(input_shape=[32,32,3], num_classes=10, num_filters=16, l1p=0, l2p=1e-4):
 
     # Input layer, change kernel size to 7x7 and strides to 2 for an official resnet
     inputs = Input(shape=input_shape)
@@ -20,21 +16,18 @@ def resnet_v1_eembc():
                   strides=1,
                   padding='same',
                   kernel_initializer='he_normal',
-                  kernel_regularizer=l2(1e-4))(inputs)
+                  kernel_regularizer=l1_l2(l1=l1p,l2=l2p))(inputs)
     x = BatchNormalization()(x)
     x = Activation('relu')(x)
-    #x = MaxPooling2D(pool_size=(2, 2))(x) # uncomment this for official resnet model
-
 
     # First stack
-
     # Weight layers
     y = Conv2D(num_filters,
                   kernel_size=3,
                   strides=1,
                   padding='same',
                   kernel_initializer='he_normal',
-                  kernel_regularizer=l2(1e-4))(x)
+                  kernel_regularizer=l1_l2(l1=l1p,l2=l2p))(x)
     y = BatchNormalization()(y)
     y = Activation('relu')(y)
     y = Conv2D(num_filters,
@@ -42,24 +35,22 @@ def resnet_v1_eembc():
                   strides=1,
                   padding='same',
                   kernel_initializer='he_normal',
-                  kernel_regularizer=l2(1e-4))(y)
+                  kernel_regularizer=l1_l2(l1=l1p,l2=l2p))(y)
     y = BatchNormalization()(y)
   
     # Overall residual, connect weight layer and identity paths
     x = tf.keras.layers.add([x, y]) 
     x = Activation('relu')(x)
 
-
     # Second stack
-
     # Weight layers
-    num_filters = 32 # Filters need to be double for each stack
+    num_filters = num_filters*2 # Filters need to be double for each stack
     y = Conv2D(num_filters,
                   kernel_size=3,
                   strides=2,
                   padding='same',
                   kernel_initializer='he_normal',
-                  kernel_regularizer=l2(1e-4))(x)
+                  kernel_regularizer=l1_l2(l1=l1p,l2=l2p))(x)
     y = BatchNormalization()(y)
     y = Activation('relu')(y)
     y = Conv2D(num_filters,
@@ -67,7 +58,7 @@ def resnet_v1_eembc():
                   strides=1,
                   padding='same',
                   kernel_initializer='he_normal',
-                  kernel_regularizer=l2(1e-4))(y)
+                  kernel_regularizer=l1_l2(l1=l1p,l2=l2p))(y)
     y = BatchNormalization()(y)
   
     # Adjust for change in dimension due to stride in identity
@@ -76,23 +67,21 @@ def resnet_v1_eembc():
                   strides=2,
                   padding='same',
                   kernel_initializer='he_normal',
-                  kernel_regularizer=l2(1e-4))(x)
+                  kernel_regularizer=l1_l2(l1=l1p,l2=l2p))(x)
 
     # Overall residual, connect weight layer and identity paths
     x = tf.keras.layers.add([x, y])
     x = Activation('relu')(x)
-
 
     # Third stack
-
     # Weight layers
-    num_filters = 64
+    num_filters = num_filters*2 # Filters need to be double for each stack
     y = Conv2D(num_filters,
                   kernel_size=3,
                   strides=2,
                   padding='same',
                   kernel_initializer='he_normal',
-                  kernel_regularizer=l2(1e-4))(x)
+                  kernel_regularizer=l1_l2(l1=l1p,l2=l2p))(x)
     y = BatchNormalization()(y)
     y = Activation('relu')(y)
     y = Conv2D(num_filters,
@@ -100,7 +89,7 @@ def resnet_v1_eembc():
                   strides=1,
                   padding='same',
                   kernel_initializer='he_normal',
-                  kernel_regularizer=l2(1e-4))(y)
+                  kernel_regularizer=l1_l2(l1=l1p,l2=l2p))(y)
     y = BatchNormalization()(y)
   
     # Adjust for change in dimension due to stride in identity
@@ -109,47 +98,11 @@ def resnet_v1_eembc():
                   strides=2,
                   padding='same',
                   kernel_initializer='he_normal',
-                  kernel_regularizer=l2(1e-4))(x)
+                  kernel_regularizer=l1_l2(l1=l1p,l2=l2p))(x)
 
     # Overall residual, connect weight layer and identity paths
     x = tf.keras.layers.add([x, y])
     x = Activation('relu')(x)
-
-
-    # Fourth stack.
-    # While the paper uses four stacks, for cifar10 that leads to a large increase in complexity for minor benefits
-    # Uncomments to use it
-
-#    # Weight layers
-#    num_filters = 128
-#    y = Conv2D(num_filters,
-#                  kernel_size=3,
-#                  strides=2,
-#                  padding='same',
-#                  kernel_initializer='he_normal',
-#                  kernel_regularizer=l2(1e-4))(x)
-#    y = BatchNormalization()(y)
-#    y = Activation('relu')(y)
-#    y = Conv2D(num_filters,
-#                  kernel_size=3,
-#                  strides=1,
-#                  padding='same',
-#                  kernel_initializer='he_normal',
-#                  kernel_regularizer=l2(1e-4))(y)
-#    y = BatchNormalization()(y)
-#  
-#    # Adjust for change in dimension due to stride in identity
-#    x = Conv2D(num_filters,
-#                  kernel_size=1,
-#                  strides=2,
-#                  padding='same',
-#                  kernel_initializer='he_normal',
-#                  kernel_regularizer=l2(1e-4))(x)
-#
-#    # Overall residual, connect weight layer and identity paths
-#    x = tf.keras.layers.add([x, y])
-#    x = Activation('relu')(x)
-
 
     # Final classification layer.
     pool_size = int(np.amin(x.shape[1:3]))
@@ -162,4 +115,3 @@ def resnet_v1_eembc():
     # Instantiate model.
     model = Model(inputs=inputs, outputs=outputs)
     return model
-
