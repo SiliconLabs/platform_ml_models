@@ -40,3 +40,16 @@ datagen = ImageDataGenerator(
     * 86.1%
 * AUC
     * .988
+
+# Install 
+* Install minicconda from here: https://docs.conda.io/en/latest/miniconda.html
+
+* Create the environment:
+```
+conda-env create -f environment.yml
+```
+
+* Activate the environment:
+``` 
+conda activate tiny-mlperf-env
+```
