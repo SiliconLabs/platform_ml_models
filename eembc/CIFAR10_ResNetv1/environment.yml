@@ -23,4 +23,4 @@ dependencies:
     - git+git://github.com/google/qkeras#egg=qkeras
     - setGPU
     - keras-flops
-    - git+git://github.com/kentaroy47/keras-Opcounters
+    - git+https://github.com/kentaroy47/keras-Opcounters
