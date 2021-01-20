@@ -8,6 +8,9 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from sklearn.metrics import roc_auc_score
 import resnet_v1_eembc
 
+#from keras_flops import get_flops #(different flop calculation)
+import kerop
+
 from tensorflow.keras.datasets import cifar10
 
 def lr_schedule(epoch):
@@ -61,8 +64,21 @@ def main(args):
     print(model.summary())
     print('#################')
 
-    # compile model with optimizer
+    # analyze FLOPs (see https://github.com/kentaroy47/keras-Opcounter)
+    layer_name, layer_flops, inshape, weights = kerop.profile(model)
 
+    # visualize FLOPs results
+    total_flop = 0
+    for name, flop, shape in zip(layer_name, layer_flops, inshape):
+        print("layer:", name, shape, " MFLOPs:", flop/1e6)
+        total_flop += flop
+    print("Total FLOPs: {} GFLOPs".format(total_flop/1e9))
+
+    # Alternative FLOPs calculation (see https://github.com/tokusumi/keras-flops), ~same answer
+    #total_flop = get_flops(model, batch_size=1)
+    #print("FLOPS: {} GLOPs".format(total_flop/1e9))
+
+    # compile model with optimizer
     model.compile(loss='categorical_crossentropy',
                   optimizer=optimizer,
                   metrics=['accuracy'])
