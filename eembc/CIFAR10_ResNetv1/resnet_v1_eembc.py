@@ -3,7 +3,7 @@ import numpy as np
 import tensorflow as tf
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Input, Dense, Activation, Flatten, BatchNormalization
-from tensorflow.keras.layers import Conv2D, AveragePooling2D, MaxPooling2D
+from tensorflow.keras.layers import Conv2D, AveragePooling2D, MaxPooling2D, Add
 from tensorflow.keras.regularizers import l1_l2
 
 #define model
@@ -40,7 +40,7 @@ def resnet_v1_eembc(input_shape=[32,32,3], num_classes=10, num_filters=[16,32,64
     y = BatchNormalization()(y)
   
     # Overall residual, connect weight layer and identity paths
-    x = tf.keras.layers.add([x, y]) 
+    x = Add()([x, y]) 
     x = Activation('relu')(x)
 
     # Second stack
@@ -70,7 +70,7 @@ def resnet_v1_eembc(input_shape=[32,32,3], num_classes=10, num_filters=[16,32,64
                   kernel_regularizer=l1_l2(l1=l1p,l2=l2p))(x)
 
     # Overall residual, connect weight layer and identity paths
-    x = tf.keras.layers.add([x, y])
+    x = Add()([x, y])
     x = Activation('relu')(x)
 
     # Third stack
@@ -100,7 +100,7 @@ def resnet_v1_eembc(input_shape=[32,32,3], num_classes=10, num_filters=[16,32,64
                   kernel_regularizer=l1_l2(l1=l1p,l2=l2p))(x)
 
     # Overall residual, connect weight layer and identity paths
-    x = tf.keras.layers.add([x, y])
+    x = Add()([x, y])
     x = Activation('relu')(x)
 
     # Final classification layer.
