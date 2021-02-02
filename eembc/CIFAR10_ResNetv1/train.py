@@ -7,11 +7,17 @@ import tensorflow as tf
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from sklearn.metrics import roc_auc_score
 import resnet_v1_eembc
+import yaml
 
 #from keras_flops import get_flops #(different flop calculation)
 import kerop
 
 from tensorflow.keras.datasets import cifar10
+
+def yaml_load(config):
+    with open(config) as stream:
+        param = yaml.safe_load(stream)
+    return param
 
 def lr_schedule(epoch):
     initial_learning_rate = 0.001
@@ -25,12 +31,16 @@ def main(args):
     # parameters
     input_shape = [32,32,3]
     num_classes = 10
-    num_filters = args.n_filters
-    l1p = args.l1
-    l2p = args.l2
-    batch_size = args.batch_size
-    num_epochs = args.n_epochs
-    save_dir = args.save_dir
+    config = yaml_load(args.config)
+    num_filters = config['model']['filters']
+    l1p = float(config['model']['l1'])
+    l2p = float(config['model']['l2'])
+    batch_size = config['fit']['batch_size']
+    num_epochs = config['fit']['epochs']
+    verbose = config['fit']['verbose']
+    patience = config['fit']['patience']
+    save_dir = config['save_dir']
+    model_name = config['model']['name']
     model_file_path = os.path.join(save_dir, 'model_best.h5')
 
     #optimizer
@@ -55,8 +65,15 @@ def main(args):
     # run preprocessing on training dataset
     datagen.fit(X_train)
 
+    kwargs = {'input_shape': input_shape,
+              'num_classes': num_classes,
+              'num_filters': num_filters,
+              'l1p': l1p,
+              'l2p': l2p}
+
     # define model
-    model = resnet_v1_eembc.resnet_v1_eembc(input_shape=input_shape, num_classes=num_classes, num_filters=num_filters, l1p=l1p, l2p=l2p)
+    model = getattr(resnet_v1_eembc,model_name)(**kwargs)
+
     # print model summary
     print('#################')
     print('# MODEL SUMMARY #')
@@ -86,16 +103,18 @@ def main(args):
     # callbacks
     from tensorflow.keras.callbacks import EarlyStopping,History,ModelCheckpoint,ReduceLROnPlateau
 
-    callbacks = [tf.keras.callbacks.LearningRateScheduler(lr_schedule, verbose=0),
-                 tf.keras.callbacks.ModelCheckpoint(model_file_path, monitor='val_loss', verbose=1, save_best_only=True)
-             ]
+    callbacks = [tf.keras.callbacks.LearningRateScheduler(lr_schedule, verbose=verbose),
+                 tf.keras.callbacks.ModelCheckpoint(model_file_path, monitor='val_loss', verbose=verbose, save_best_only=True),
+                 tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=patience, verbose=verbose, restore_best_weights=True)
+    ]
 
     # train
     model.fit(datagen.flow(X_train, y_train, batch_size=batch_size),
               steps_per_epoch=X_train.shape[0] // batch_size,
               epochs=num_epochs,
               validation_data=(X_test, y_test),
-              callbacks=callbacks)
+              callbacks=callbacks,
+              verbose=verbose)
 
 
     # restore "best" model
@@ -117,12 +136,7 @@ def main(args):
     
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--n-epochs', type=int, default=100, help="number of epochs")
-    parser.add_argument('--n-filters', type=int, default=16, help="number of filters")
-    parser.add_argument('--batch-size', type=int, default=128, help="batch size")
-    parser.add_argument('--save-dir', type=str, default="resnet_v1_eembc", help="save directory")
-    parser.add_argument('--l2', type=float, default=1e-4, help="l2 penalty")    
-    parser.add_argument('--l1', type=float, default=0, help="l1 penalty")
+    parser.add_argument('-c', '--config', type=str, default = "baseline.yaml", help="specify yaml config")
 
     args = parser.parse_args()
 
