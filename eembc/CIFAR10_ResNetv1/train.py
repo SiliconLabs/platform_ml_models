@@ -43,10 +43,11 @@ def main(args):
     patience = config['fit']['patience']
     save_dir = config['save_dir']
     model_name = config['model']['name']
+    loss = config['fit']['compile']['loss']
     model_file_path = os.path.join(save_dir, 'model_best.h5')
 
-    #optimizer
-    optimizer = tf.keras.optimizers.Adam()
+    # optimizer
+    optimizer = config['fit']['compile']['optimizer']
 
     # load dataset
     (X_train, y_train), (X_test, y_test) = cifar10.load_data()
@@ -100,7 +101,7 @@ def main(args):
     #print("FLOPS: {} GLOPs".format(total_flop/1e9))
 
     # compile model with optimizer
-    model.compile(loss='categorical_crossentropy',
+    model.compile(loss=loss,
                   optimizer=optimizer,
                   metrics=['accuracy'])
 
