@@ -2,9 +2,18 @@ save_dir: resnet_v1_eembc
 
 model:
   name: resnet_v1_eembc
-  filters: 16
+  filters: 
+  - 16
+  - 32
+  - 64
   l1: 1e-4
   l2: 0
+  kernels:
+  - 3
+  - 1
+  strides: 
+  - 1
+  - 2
 
 pruning:
   sparsity: 1.0 

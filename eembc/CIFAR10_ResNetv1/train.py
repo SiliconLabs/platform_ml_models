@@ -33,6 +33,8 @@ def main(args):
     num_classes = 10
     config = yaml_load(args.config)
     num_filters = config['model']['filters']
+    kernel_sizes = config['model']['kernels']
+    strides = config['model']['strides']
     l1p = float(config['model']['l1'])
     l2p = float(config['model']['l2'])
     batch_size = config['fit']['batch_size']
@@ -68,6 +70,8 @@ def main(args):
     kwargs = {'input_shape': input_shape,
               'num_classes': num_classes,
               'num_filters': num_filters,
+              'kernel_sizes': kernel_sizes,
+              'strides': strides,
               'l1p': l1p,
               'l2p': l2p}
 
