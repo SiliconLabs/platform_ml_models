@@ -1,0 +1,21 @@
+KerasH5:   resnet_v1_eembc/model_best.h5
+OutputDir: my-hls-test
+ProjectName: myproject
+XilinxPart: xcku115-flvb2104-2-i
+ClockPeriod: 5
+
+IOType: io_parallel # options: io_serial/io_parallel
+HLSConfig:
+  Model:
+    Precision: ap_fixed<16,6>
+    ReuseFactor: 144
+    Strategy: Resource
+  LayerName:
+    conv2d: 
+      ReuseFactor: 108
+    dense:
+      ReuseFactor: 128
+    conv2d_5:
+      ReuseFactor: 128
+    conv2d_8:
+      ReuseFactor: 128

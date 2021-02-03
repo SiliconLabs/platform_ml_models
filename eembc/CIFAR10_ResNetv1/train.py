@@ -1,4 +1,3 @@
-import setGPU
 import os
 import glob
 import sys
@@ -147,7 +146,7 @@ def main(args):
     
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('-c', '--config', type=str, default = "baseline.yaml", help="specify yaml config")
+    parser.add_argument('-c', '--config', type=str, default = "baseline.yml", help="specify yaml config")
 
     args = parser.parse_args()
 

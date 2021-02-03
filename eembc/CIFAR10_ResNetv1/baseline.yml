@@ -6,8 +6,8 @@ model:
   - 16
   - 32
   - 64
-  l1: 0.01
-  l2: 0.01
+  l1: 0.001
+  l2: 0
   kernels:
   - 3
   - 1
@@ -26,5 +26,5 @@ fit:
     loss: categorical_crossentropy
   epochs: 100
   patience: 10
-  batch_size: 256
+  batch_size: 128
   verbose: 1
