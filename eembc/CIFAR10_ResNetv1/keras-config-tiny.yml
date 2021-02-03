@@ -1,0 +1,15 @@
+KerasH5:   resnet_v1_eembc_tiny/model_best.h5
+OutputDir: my-hls-test-tiny
+ProjectName: myproject
+XilinxPart: xcku115-flvb2104-2-i
+ClockPeriod: 5
+
+IOType: io_stream
+HLSConfig:
+  Model:
+    Precision: ap_fixed<16,6>
+    ReuseFactor: 8
+    Strategy: Resource
+  LayerName:
+    conv2d: 
+      ReuseFactor: 9

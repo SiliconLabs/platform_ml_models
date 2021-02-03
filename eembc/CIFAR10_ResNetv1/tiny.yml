@@ -1,0 +1,28 @@
+save_dir: resnet_v1_eembc_tiny
+
+model:
+  name: resnet_v1_eembc_tiny
+  filters: 
+  - 8
+  l1: 0.001
+  l2: 0
+  kernels:
+  - 3
+  - 1
+  strides:
+  - 1
+  - 2
+
+pruning:
+  sparsity: 1.0 
+
+fit:
+  compile:
+    initial_lr: 0.001
+    lr_decay: 0.99
+    optimizer: Adam
+    loss: categorical_crossentropy
+  epochs: 100
+  patience: 10
+  batch_size: 128
+  verbose: 1
