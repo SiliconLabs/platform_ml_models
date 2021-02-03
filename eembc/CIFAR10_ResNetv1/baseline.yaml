@@ -6,8 +6,8 @@ model:
   - 16
   - 32
   - 64
-  l1: 1e-4
-  l2: 0
+  l1: 0.01
+  l2: 0.01
   kernels:
   - 3
   - 1
@@ -20,9 +20,11 @@ pruning:
 
 fit:
   compile:
-    optimizer: adam
+    initial_lr: 0.001
+    lr_decay: 0.99
+    optimizer: Adam
     loss: categorical_crossentropy
   epochs: 100
-  patience: 5
-  batch_size: 128
+  patience: 10
+  batch_size: 256
   verbose: 1
