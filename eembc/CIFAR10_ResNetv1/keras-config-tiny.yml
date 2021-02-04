@@ -1,15 +1,23 @@
 KerasH5:   resnet_v1_eembc_tiny/model_best.h5
 OutputDir: my-hls-test-tiny
 ProjectName: myproject
-XilinxPart: xcku115-flvb2104-2-i
+XilinxPart: xc7z020clg400-1
 ClockPeriod: 5
 
 IOType: io_stream
 HLSConfig:
   Model:
     Precision: ap_fixed<16,6>
-    ReuseFactor: 8
+    ReuseFactor: 64
     Strategy: Resource
   LayerName:
     conv2d: 
-      ReuseFactor: 9
+      ReuseFactor: 54
+    conv2d_1: 
+      ReuseFactor: 72
+    conv2d_2: 
+      ReuseFactor: 72
+    conv2d_1: 
+      ReuseFactor: 72
+    dense:
+      ReuseFactor: 80
