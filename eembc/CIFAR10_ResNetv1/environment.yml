@@ -18,3 +18,4 @@ dependencies:
     - git+git://github.com/google/qkeras#egg=qkeras
     - keras-flops
     - git+https://github.com/kentaroy47/keras-Opcounter
+    - git+git://github.com/google/qkeras#egg=qkeras 

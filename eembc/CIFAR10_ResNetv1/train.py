@@ -38,6 +38,13 @@ def main(args):
     loss = config['fit']['compile']['loss']
     model_file_path = os.path.join(save_dir, 'model_best.h5')
 
+    # quantization parameters
+    if model_name == "resnet_v1_eembc_quantized":
+        logit_total_bits = config["quantization"]["logit_total_bits"]
+        logit_int_bits = config["quantization"]["logit_int_bits"]
+        activation_total_bits = config["quantization"]["activation_total_bits"]
+        activation_int_bits = config["quantization"]["activation_int_bits"]
+
     # optimizer
     optimizer = getattr(tf.keras.optimizers,config['fit']['compile']['optimizer'])
     initial_lr = config['fit']['compile']['initial_lr']
@@ -69,6 +76,13 @@ def main(args):
               'strides': strides,
               'l1p': l1p,
               'l2p': l2p}
+
+    # pass quantization params
+    if model_name == "resnet_v1_eembc_quantized":
+        kwargs["logit_total_bits"] = logit_total_bits
+        kwargs["logit_int_bits"] = logit_int_bits
+        kwargs["activation_total_bits"] = activation_total_bits
+        kwargs["activation_int_bits"] = activation_int_bits
 
     # define model
     model = getattr(resnet_v1_eembc,model_name)(**kwargs)
