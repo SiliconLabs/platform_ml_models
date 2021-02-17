@@ -26,35 +26,37 @@ model.compile(optimizer='rmsprop', loss='categorical_crossentropy')
 model.summary()
 
 # %% load train data
-tot_x = np.loadtxt('/data/jaelenes/datasets/UCI_HAR/train/inertial/total_acc_x_train.txt').astype('float16')
-tot_y = np.loadtxt('/data/jaelenes/datasets/UCI_HAR/train/inertial/total_acc_y_train.txt').astype('float16')
-tot_z = np.loadtxt('/data/jaelenes/datasets/UCI_HAR/train/inertial/total_acc_z_train.txt').astype('float16')
-acc_x = np.loadtxt('/data/jaelenes/datasets/UCI_HAR/train/inertial/body_acc_x_train.txt').astype('float16')
-acc_y = np.loadtxt('/data/jaelenes/datasets/UCI_HAR/train/inertial/body_acc_y_train.txt').astype('float16')
-acc_z = np.loadtxt('/data/jaelenes/datasets/UCI_HAR/train/inertial/body_acc_z_train.txt').astype('float16')
-gyr_x = np.loadtxt('/data/jaelenes/datasets/UCI_HAR/train/inertial/body_gyro_x_train.txt').astype('float16')
-gyr_y = np.loadtxt('/data/jaelenes/datasets/UCI_HAR/train/inertial/body_gyro_y_train.txt').astype('float16')
-gyr_z = np.loadtxt('/data/jaelenes/datasets/UCI_HAR/train/inertial/body_gyro_z_train.txt').astype('float16')
+train_dir='/data/jaelenes/platform_ml_models/eembc/human_activity_recognition/data/UCI HAR Dataset/train/'
+tot_x = np.loadtxt(train_dir+'Inertial Signals/total_acc_x_train.txt').astype('float16')
+tot_y = np.loadtxt(train_dir+'Inertial Signals/total_acc_y_train.txt').astype('float16')
+tot_z = np.loadtxt(train_dir+'Inertial Signals/total_acc_z_train.txt').astype('float16')
+acc_x = np.loadtxt(train_dir+'Inertial Signals/body_acc_x_train.txt').astype('float16')
+acc_y = np.loadtxt(train_dir+'Inertial Signals/body_acc_y_train.txt').astype('float16')
+acc_z = np.loadtxt(train_dir+'Inertial Signals/body_acc_z_train.txt').astype('float16')
+gyr_x = np.loadtxt(train_dir+'Inertial Signals/body_gyro_x_train.txt').astype('float16')
+gyr_y = np.loadtxt(train_dir+'Inertial Signals/body_gyro_y_train.txt').astype('float16')
+gyr_z = np.loadtxt(train_dir+'Inertial Signals/body_gyro_z_train.txt').astype('float16')
 
 # %%
 x_train = np.stack((tot_x, tot_y, tot_z, acc_x, acc_y, acc_z, gyr_x, gyr_y, gyr_z), axis=2)
-y_train_raw = np.loadtxt('/data/jaelenes/datasets/UCI_HAR/train/y_train.txt').astype('int8')
+y_train_raw = np.loadtxt(train_dir+'y_train.txt').astype('int8')
 y_train = to_categorical(y_train_raw-1)
 
 # %% load test data
-tot_x = np.loadtxt('/data/jaelenes/datasets/UCI_HAR/test/inertial/total_acc_x_test.txt').astype('float16')
-tot_y = np.loadtxt('/data/jaelenes/datasets/UCI_HAR/test/inertial/total_acc_y_test.txt').astype('float16')
-tot_z = np.loadtxt('/data/jaelenes/datasets/UCI_HAR/test/inertial/total_acc_z_test.txt').astype('float16')
-acc_x = np.loadtxt('/data/jaelenes/datasets/UCI_HAR/test/inertial/body_acc_x_test.txt').astype('float16')
-acc_y = np.loadtxt('/data/jaelenes/datasets/UCI_HAR/test/inertial/body_acc_y_test.txt').astype('float16')
-acc_z = np.loadtxt('/data/jaelenes/datasets/UCI_HAR/test/inertial/body_acc_z_test.txt').astype('float16')
-gyr_x = np.loadtxt('/data/jaelenes/datasets/UCI_HAR/test/inertial/body_gyro_x_test.txt').astype('float16')
-gyr_y = np.loadtxt('/data/jaelenes/datasets/UCI_HAR/test/inertial/body_gyro_y_test.txt').astype('float16')
-gyr_z = np.loadtxt('/data/jaelenes/datasets/UCI_HAR/test/inertial/body_gyro_z_test.txt').astype('float16')
+test_dir='/data/jaelenes/platform_ml_models/eembc/human_activity_recognition/data/UCI HAR Dataset/test/'
+tot_x = np.loadtxt('Inertial Signals/total_acc_x_test.txt').astype('float16')
+tot_y = np.loadtxt('Inertial Signals/total_acc_y_test.txt').astype('float16')
+tot_z = np.loadtxt('Inertial Signals/total_acc_z_test.txt').astype('float16')
+acc_x = np.loadtxt('Inertial Signals/body_acc_x_test.txt').astype('float16')
+acc_y = np.loadtxt('Inertial Signals/body_acc_y_test.txt').astype('float16')
+acc_z = np.loadtxt('Inertial Signals/body_acc_z_test.txt').astype('float16')
+gyr_x = np.loadtxt('Inertial Signals/body_gyro_x_test.txt').astype('float16')
+gyr_y = np.loadtxt('Inertial Signals/body_gyro_y_test.txt').astype('float16')
+gyr_z = np.loadtxt('Inertial Signals/body_gyro_z_test.txt').astype('float16')
 
 # %%
 x_test = np.stack((tot_x, tot_y, tot_z, acc_x, acc_y, acc_z, gyr_x, gyr_y, gyr_z), axis=2)
-y_test_raw = np.loadtxt('/data/jaelenes/datasets/UCI_HAR/test/y_test.txt').astype('int8')
+y_test_raw = np.loadtxt(test_dir+'y_test.txt').astype('int8')
 y_test = to_categorical(y_test_raw-1)
 
 
