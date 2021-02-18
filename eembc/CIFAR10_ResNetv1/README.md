@@ -7,15 +7,26 @@
     
 # Required software packages
 - Python [3.7.x or 3.8.x](https://www.python.org/downloads/) 
-- matplotlib to install type `pip install matplotlib` and follow the same approach for packages below.
-- tensorflow (3.4.x)
-- sklearn
 
 # To run the code
-To simply train and test with CIFAR10, type `python cifar10_main.py`. The code will train the network and show the training history. Then it will test with the validation data and show accuracy, AUC and confusion matrix.
+To simply train and test, do the following:
+```
+cd <git repo root>/eembc/CIFAR10_ResNetv1 
+# Create virtual environment
+python -m venv venv
+# Activate virtual environment (Linux)
+source ./venv/bin/activate (Linux)
+# Activate virtual environment (Windows)
+.\venv\Scripts\activate (Windows)
+# Install python dependencies 
+pip install -r requirements.txt
+# Run training and evaluation script 
+python cifar10_main.py
+``` 
+The code will train the network and show the training history. Then it will test with the validation data and show accuracy, AUC and confusion matrix.
 Type `python cifar10_main.py --help` to see all available options.
 
-__NOTE__ Under Windows, the following error may be encountered `AttributeError: module 'tensorflow.lite.python.schema_py_generated' has no attribute 'Model'`. If that happens typically `schema_py_generated.py`, located in `Python3x\Lib\site-packages\tensorflow\lite\python` is empty. Find a non-empty copy - ideally under Linux - and copy the content.
+__NOTE__ Under Windows, the following error may be encountered `AttributeError: module 'tensorflow.lite.python.schema_py_generated' has no attribute 'Model'`. If that happens typically `schema_py_generated.py`, located in `.\venv\Lib\site-packages\tensorflow\lite\python` is empty. Find a non-empty copy - ideally under Linux - and copy the content.
 
 # Training details
 
