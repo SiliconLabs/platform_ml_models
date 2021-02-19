@@ -26,8 +26,6 @@ python cifar10_main.py
 The code will train the network and show the training history. Then it will test with the validation data and show accuracy, AUC and confusion matrix.
 Type `python cifar10_main.py --help` to see all available options.
 
-__NOTE__ Under Windows, the following error may be encountered `AttributeError: module 'tensorflow.lite.python.schema_py_generated' has no attribute 'Model'`. If that happens typically `schema_py_generated.py`, located in `.\venv\Lib\site-packages\tensorflow\lite\python` is empty. Find a non-empty copy - ideally under Linux - and copy the content.
-
 # Training details
 
 ## Optimizer
