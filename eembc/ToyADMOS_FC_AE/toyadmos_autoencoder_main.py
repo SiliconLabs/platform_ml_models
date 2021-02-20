@@ -23,10 +23,18 @@ from callbacks import lr_schedule, TrainingCallbacks, TrainingSequence
 def main():
     # Parse the args
     parser = argparse.ArgumentParser(description='This script evaluates an classification model')
-    parser.add_argument("--training", '-t', default='False', help='Determines whether to run the training phase or just infer')
+    parser.add_argument("--extract", '-x', default='True', help='Determines whether to do dataset extraction')
+    parser.add_argument("--dataset", '-d', default='./ToyAdmos', help='Location of ToyAdmos dataset')
+    parser.add_argument("--training", '-t', default='True', help='Determines whether to run the training phase or just infer')
     parser.add_argument("--lite", '-l', default='False', help='Determines whether to use the the tflite or floating point model')
     parser.add_argument("--epochs", '-e', default='100', help='Number of epochs to run')
+    parser.add_argument("--seed", '-s', default='1234', help='Seed of random operations')
     args = parser.parse_args()
+
+    try:
+        do_extraction = bool(strtobool(args.extract))
+    except ValueError:
+        do_extraction = True
 
     try:
         do_training = bool(strtobool(args.training))
@@ -38,9 +46,9 @@ def main():
     except ValueError:
         use_tflite_model = False
 
+    base_dir = args.dataset
+
     # FIXME, make these configurable via command line
-    do_extraction = False
-    base_dir = "C:/cygwin64/home/antorrin/altus/modeling/projects/toyadmos/source/matlab"
     model = "ToyCar"
     cases = (1,)
 
@@ -48,6 +56,7 @@ def main():
     validation_split = .2
     name = "toyadmos_autoencoder_eembc"
     epochs = int(args.epochs)
+    seed = int(args.seed)
     batch_size = 40
     log_dir = 'log_toyadmos'
     if not os.path.exists(log_dir):
@@ -55,7 +64,8 @@ def main():
 
     # Get dataset
     X_normal_train, X_normal_val, X_anomalous = load_dataset(base_dir=base_dir, model=model, 
-        cases=cases, log_dir=log_dir, validation_split=validation_split, do_extraction=do_extraction)
+        cases=cases, log_dir=log_dir, validation_split=validation_split, 
+        do_extraction=do_extraction, seed=seed)
 
     #init_gpus()
 

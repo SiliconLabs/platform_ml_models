@@ -12,7 +12,7 @@ def spectrogram_l(wav_file, hop_length, win_length, n_mels):
     S = melspectrogram(y=y, sr=sr, n_fft=4096, hop_length=hop_length, win_length=win_length, n_mels=n_mels)
     return np.log10(S+1e-6).transpose()
 
-def load_dataset(base_dir, model, cases, log_dir, validation_split, do_extraction):
+def load_dataset(base_dir, model, cases, log_dir, validation_split, do_extraction, seed):
     # Spectrogram parameters, fixed
     hop_length = 1536
     win_length = 3072
@@ -53,7 +53,8 @@ def load_dataset(base_dir, model, cases, log_dir, validation_split, do_extractio
     plt.show(block=False)
     plt.pause(0.1)
 
-    if do_extraction:
+    spectrograms_file_name = f"{log_dir}/spectrograms.npz"
+    if do_extraction | (not os.path.exists(spectrograms_file_name)):
         # Allocate buffers
         X_normal = np.zeros((normal_len, S_normal.shape[0], S_normal.shape[1],1), dtype=np.float32)
         X_anomalous = np.zeros((anomalous_len, S_anomalous.shape[0], S_anomalous.shape[1],1), dtype=np.float32)
@@ -61,17 +62,20 @@ def load_dataset(base_dir, model, cases, log_dir, validation_split, do_extractio
         # Loop and load
         normal_counter, anomalous_counter = 0, 0
         for case in cases:
+            print(f"Extracting normal spectrograms for {model}, case{case}")
             normal_dir = f"{base_dir}/{model}/case{case}/NormalSound_IND"
             for file in os.listdir(normal_dir):
                 X_normal[normal_counter,:,:,0] = spectrogram_l(f"{normal_dir}/{file}", hop_length, win_length, n_mels)
                 normal_counter += 1
 
+            print(f"Extracting anomalous spectrograms for {model}, case{case}")
             anomalous_dir = f"{base_dir}/{model}/case{case}/AnomalousSound_IND"
             for file in os.listdir(anomalous_dir):
                 X_anomalous[anomalous_counter,:,:,0] = spectrogram_l(f"{anomalous_dir}/{file}", hop_length, win_length, n_mels)
                 anomalous_counter += 1
 
-        # Split X_normal into training and validation
+        # Split X_normal into training and validation, seeded for reproducible results
+        np.random.seed(seed=seed)
         indexes = np.arange(len(X_normal))
         np.random.shuffle(indexes)
         validation_limit = int(validation_split*len(indexes))
@@ -79,10 +83,10 @@ def load_dataset(base_dir, model, cases, log_dir, validation_split, do_extractio
         X_normal_val = X_normal[indexes[0:validation_limit]]
 
         # Save dataset
-        np.savez(f"{log_dir}/spectrograms.npz", a=X_normal_train, b=X_normal_val, c=X_anomalous)
+        np.savez(spectrograms_file_name, a=X_normal_train, b=X_normal_val, c=X_anomalous)
     else:
         # Load dataset
-        with np.load(f"{log_dir}/spectrograms.npz") as data:
+        with np.load(spectrograms_file_name) as data:
             X_normal_train = data['a']
             X_normal_val = data['b']
             X_anomalous = data['c']
