@@ -27,7 +27,7 @@ def main():
     parser.add_argument("--dataset", '-d', default='./ToyAdmos', help='Location of ToyAdmos dataset')
     parser.add_argument("--training", '-t', default='True', help='Determines whether to run the training phase or just infer')
     parser.add_argument("--lite", '-l', default='False', help='Determines whether to use the the tflite or floating point model')
-    parser.add_argument("--epochs", '-e', default='200', help='Number of epochs to run')
+    parser.add_argument("--epochs", '-e', default='100', help='Number of epochs to run')
     parser.add_argument("--seed", '-s', default='1234', help='Seed of random operations')
     args = parser.parse_args()
 
@@ -91,7 +91,7 @@ def main():
         plt.figure()
         plt.plot(model_t.history['mean_squared_error'],'r')
         plt.plot(model_t.history['val_mean_squared_error'],'g')
-        plt.ylim([0, 1])
+        plt.ylim([0, 400])
         plt.xticks(np.arange(0, epochs+1, 50.0))
         plt.rcParams['figure.figsize'] = (8, 6)
         plt.xlabel("Num of Epochs")

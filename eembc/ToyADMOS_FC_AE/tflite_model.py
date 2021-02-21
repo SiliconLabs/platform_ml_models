@@ -20,7 +20,7 @@ class TfliteModel():
                 if done: 
                     break 
                 sample_count += 1
-                if sample_count > 4000:
+                if sample_count > 1000:
                     done = True 
                 yield [np.expand_dims(sample, axis=0)]
 
@@ -31,8 +31,8 @@ class TfliteModel():
         converter.optimizations = [tf.lite.Optimize.DEFAULT]
         converter.representative_dataset = self.representative_dataset
         converter.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS_INT8]
-        converter.inference_input_type = tf.int8  # or tf.uint8
-        converter.inference_output_type = tf.int8  # or tf.uint8
+        #converter.inference_input_type = tf.int8  # or tf.uint8
+        #converter.inference_output_type = tf.int8  # or tf.uint8
         self.tflite_flatbuffer_data = converter.convert()
 
     # Save tflite model to file
@@ -66,7 +66,7 @@ class TfliteModel():
             for j in range(len(input_data)):
 
                 # Run model on data
-                self.interpreter.set_tensor(input_details[0]['index'], (input_data[j][np.newaxis]).astype('int8'))
+                self.interpreter.set_tensor(input_details[0]['index'], (input_data[j][np.newaxis]).astype('float32'))
                 self.interpreter.invoke()
 
                 # The function `get_tensor()` returns a copy of the tensor data.
