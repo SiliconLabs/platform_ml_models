@@ -74,6 +74,14 @@ def load_dataset(base_dir, model, cases, log_dir, validation_split, do_extractio
                 X_anomalous[anomalous_counter,:,:,0] = spectrogram_l(f"{anomalous_dir}/{file}", hop_length, win_length, n_mels)
                 anomalous_counter += 1
 
+        # Normalize and scale in the int8 range
+        mmin = X_normal.min()
+        mmax = X_normal.max()
+        X_normal = (X_normal-mmin)/(mmax-mmin)
+        X_normal = .75*(255*X_normal-128)
+        X_anomalous = (X_anomalous-mmin)/(mmax-mmin)
+        X_anomalous = .75*(255*X_anomalous-128)
+
         # Split X_normal into training and validation, seeded for reproducible results
         np.random.seed(seed=seed)
         indexes = np.arange(len(X_normal))

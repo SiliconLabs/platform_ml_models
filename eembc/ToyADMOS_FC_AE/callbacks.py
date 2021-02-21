@@ -41,6 +41,7 @@ class TrainingSequence(tf.keras.utils.Sequence):
         self.batch_size = batch_size
         self.is_training = is_training
         self.window = window
+        self.shape = int(self.batch_size*np.floor(len(self.x) / self.batch_size))
 
     def __len__(self):
         return int(np.floor(len(self.x) / self.batch_size))

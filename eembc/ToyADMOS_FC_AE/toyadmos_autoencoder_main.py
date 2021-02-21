@@ -17,17 +17,17 @@ import sys
 sys.path.append('../Methodology/')
 from eval_functions_eembc import calculate_ae_pr_accuracy, calculate_ae_auc
 from toyadmos_autoencoder_eembc import toyadmos_autoencoder_eembc
-#from tflite_model import TfliteModel
+from tflite_model import TfliteModel
 from callbacks import lr_schedule, TrainingCallbacks, TrainingSequence
 
 def main():
     # Parse the args
     parser = argparse.ArgumentParser(description='This script evaluates an classification model')
-    parser.add_argument("--extract", '-x', default='True', help='Determines whether to do dataset extraction')
+    parser.add_argument("--extract", '-x', default='False', help='Determines whether to do dataset extraction')
     parser.add_argument("--dataset", '-d', default='./ToyAdmos', help='Location of ToyAdmos dataset')
     parser.add_argument("--training", '-t', default='True', help='Determines whether to run the training phase or just infer')
     parser.add_argument("--lite", '-l', default='False', help='Determines whether to use the the tflite or floating point model')
-    parser.add_argument("--epochs", '-e', default='100', help='Number of epochs to run')
+    parser.add_argument("--epochs", '-e', default='200', help='Number of epochs to run')
     parser.add_argument("--seed", '-s', default='1234', help='Seed of random operations')
     args = parser.parse_args()
 
@@ -107,11 +107,17 @@ def main():
             os.makedirs(log_dir)
         model.save_weights(log_dir + '/weights.hdf5')
 
+        # Convert and save tflite model
+        tflite_model = TfliteModel(model, sequence_normal_train)
+        tflite_model.convert()
+        tflite_model.save(log_dir + '/model.tflite')
+      
     # Load and evaluate the quantized tflite model
     if( use_tflite_model ):
         tflite_model = TfliteModel()
         tflite_model.load(log_dir + '/model.tflite')
-        y_pred = tflite_model.predict(x_test, batch_size)
+        y_pred_normal_val = tflite_model.predict(sequence_normal_val)
+        y_pred_anomalous = tflite_model.predict(sequence_anomalous)
     # Or else normal model
     else:
         model.load_weights(log_dir + '/weights.hdf5')
