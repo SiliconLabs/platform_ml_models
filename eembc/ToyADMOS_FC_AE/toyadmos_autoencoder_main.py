@@ -67,7 +67,7 @@ def main():
         cases=cases, log_dir=log_dir, validation_split=validation_split, 
         do_extraction=do_extraction, seed=seed)
 
-    #init_gpus()
+    init_gpus()
 
     # Optimizer
     optimizer = tf.keras.optimizers.Adam()
@@ -161,7 +161,37 @@ def main():
     except KeyboardInterrupt:
         pass
 
+def init_gpus():
+    # Enable dynamic memory growth for GPUs
+    # This works around potential issues on Windows
+    try:
+        tf_gpus = tf.config.list_physical_devices('GPU')
+        for gpu in tf_gpus:
+            tf.config.experimental.set_memory_growth(gpu, True)
+    except:
+        pass
+
+
+def tensorflow_import_error_workaround():
+    """This works around an exception generated during TF-Lite conversion:
+    "module 'tensorflow.lite.python.schema_py_generated' has no attribute 'Model'"
+    The issue in Tensorflow 2.4 because:
+    tensorflow.lite.python.schema_py_generated is empty.
+    This work-around simply copies from tensorflow_lite_support.metadata.schema_py_generated
+    to  tensorflow.lite.python.schema_py_generated  and reloads the module
+    """
+    # pylint: disable=import-outside-toplevel
+    import importlib
+    from tensorflow.lite.python import schema_py_generated as _tf_schema_fb
+    import tensorflow_lite_support.metadata.schema_py_generated as _tflite_schema_fb
+
+    if os.path.getsize(_tf_schema_fb.__file__) == 0:
+        with open(_tflite_schema_fb.__file__, 'r') as src:
+            with open(_tf_schema_fb.__file__, 'w') as dst:
+                dst.write(src.read())
+        importlib.reload(_tf_schema_fb)
+
 if __name__ == '__main__':
-    #tensorflow_import_error_workaround()
+    tensorflow_import_error_workaround()
     main()
 
