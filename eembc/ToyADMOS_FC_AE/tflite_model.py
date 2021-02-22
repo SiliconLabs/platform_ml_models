@@ -91,6 +91,6 @@ class TfliteModel():
         print('\n')
 
         # Scale to match floating point range for test functions
-        y_pred = y_pred.astype('float32')
+        #y_pred = y_pred.astype('float32')
         return y_pred
 
