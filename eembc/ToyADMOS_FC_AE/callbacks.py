@@ -53,10 +53,9 @@ class TrainingSequence(tf.keras.utils.Sequence):
     def __getitem__(self, idx):
         if self.is_training:
             start = np.random.randint(50, self.x.shape[1]-100 )
-            batch_x = self.x[idx * self.batch_size:(idx + 1) * self.batch_size,start:start+self.window]
         else:
             start = int(self.x.shape[1]/2)
-            batch_x = self.x[idx * self.batch_size:(idx + 1) * self.batch_size,start:start+self.window]
+        batch_x = self.x[idx * self.batch_size:(idx + 1) * self.batch_size,start:start+self.window]
 
         #breakpoint()
         #print(f"__getitem__, idx={idx}")
