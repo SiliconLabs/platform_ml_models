@@ -91,7 +91,7 @@ def main():
         plt.figure()
         plt.plot(model_t.history['mean_squared_error'],'r')
         plt.plot(model_t.history['val_mean_squared_error'],'g')
-        plt.ylim([0, 400])
+        plt.ylim([0, 1000])
         plt.xticks(np.arange(0, epochs+1, 50.0))
         plt.rcParams['figure.figsize'] = (8, 6)
         plt.xlabel("Num of Epochs")

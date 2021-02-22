@@ -31,8 +31,8 @@ class TfliteModel():
         converter.optimizations = [tf.lite.Optimize.DEFAULT]
         converter.representative_dataset = self.representative_dataset
         converter.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS_INT8]
-        #converter.inference_input_type = tf.int8  # or tf.uint8
-        #converter.inference_output_type = tf.int8  # or tf.uint8
+        converter.inference_input_type = tf.int8  # or tf.uint8
+        converter.inference_output_type = tf.int8  # or tf.uint8
         self.tflite_flatbuffer_data = converter.convert()
 
     # Save tflite model to file
@@ -47,12 +47,17 @@ class TfliteModel():
     # Prediction on some test set data
     def predict(self, x_test, batch_size=1):
         self.interpreter.allocate_tensors()
+
         # Get input and output tensors.
         input_details = self.interpreter.get_input_details()
         output_details = self.interpreter.get_output_details()
 
+        # Get quantization details, necessary for proper input/output scaling
+        input_gain, input_offset = input_details[0]['quantization']
+        output_gain, output_offset = output_details[0]['quantization']
+
         # Allocate the output vector
-        y_pred = np.zeros(np.append(x_test.x.shape[0],output_details[0]['shape'][1:]))
+        y_pred = np.zeros(np.append(x_test.x.shape[0],output_details[0]['shape'][1:]),dtype='float32')
 
         # Infer on all test data.
         text = "{index:4d}/{ll:4d} "
@@ -65,8 +70,11 @@ class TfliteModel():
 
             for j in range(len(input_data)):
 
+                # Get data and apply optimal quantization
+                scaled_input = (input_data[j] / input_gain) + input_offset
+                self.interpreter.set_tensor(input_details[0]['index'], scaled_input[np.newaxis].astype('int8'))
+
                 # Run model on data
-                self.interpreter.set_tensor(input_details[0]['index'], (input_data[j][np.newaxis]).astype('float32'))
                 self.interpreter.invoke()
 
                 # The function `get_tensor()` returns a copy of the tensor data.
@@ -90,7 +98,6 @@ class TfliteModel():
 
         print('\n')
 
-        # Scale to match floating point range for test functions
-        #y_pred = y_pred.astype('float32')
-        return np.round(y_pred)
+        # Scale to right quantization
+        return (y_pred - output_offset) * output_gain
 

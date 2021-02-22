@@ -78,9 +78,9 @@ def load_dataset(base_dir, model, cases, log_dir, validation_split, do_extractio
         mmin = X_normal.min()
         mmax = X_normal.max()
         X_normal = (X_normal-mmin)/(mmax-mmin)
-        X_normal = np.round(.9*(255*X_normal-128))
+        X_normal = 255*X_normal-128
         X_anomalous = (X_anomalous-mmin)/(mmax-mmin)
-        X_anomalous = np.round(.9*(255*X_anomalous-128))
+        X_anomalous = 255*X_anomalous-128
 
         # Split X_normal into training and validation, seeded for reproducible results
         np.random.seed(seed=seed)
