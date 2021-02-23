@@ -51,8 +51,12 @@ class TfliteModel():
         input_details = self.interpreter.get_input_details()
         output_details = self.interpreter.get_output_details()
 
+        # Get quantization details, necessary for proper input/output scaling
+        input_gain, input_offset = input_details[0]['quantization']
+        output_gain, output_offset = output_details[0]['quantization']
+
         # Allocate the output vector
-        y_pred = np.zeros((x_test.shape[0],output_details[0]['shape'][1]))
+        y_pred = np.zeros((x_test.shape[0],output_details[0]['shape'][1]),dtype='float32')
 
         # Infer on all test data.
         text = "{index:4d}/{ll:4d} "
@@ -61,7 +65,7 @@ class TfliteModel():
         t = time.time()
         for i in range(len(x_test)):
             # Get input data (in correct INT8 range)
-            input_data = (x_test[i][np.newaxis]*128).astype('int8')
+            input_data = ((x_test[i][np.newaxis] / input_gain) + input_offset).astype('int8')
 
             # Run model on data
             self.interpreter.set_tensor(input_details[0]['index'], input_data)
@@ -70,7 +74,7 @@ class TfliteModel():
             # The function `get_tensor()` returns a copy of the tensor data.
             # Use `tensor()` in order to get a pointer to the tensor.
             output_data = self.interpreter.get_tensor(output_details[0]['index'])
-            y_pred[i,::] = output_data
+            y_pred[i,::] = output_data.astype('float32')
             #print(output_data)
 
             # Update display
@@ -89,6 +93,5 @@ class TfliteModel():
         print('\n')
 
         # Scale to match floating point range for test functions
-        y_pred = (y_pred.astype('float32')+128)/255
-        return y_pred
+        return (y_pred - output_offset) * output_gain
 

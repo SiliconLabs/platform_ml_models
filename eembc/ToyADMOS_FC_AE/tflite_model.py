@@ -80,8 +80,7 @@ class TfliteModel():
                 # The function `get_tensor()` returns a copy of the tensor data.
                 # Use `tensor()` in order to get a pointer to the tensor.
                 output_data = self.interpreter.get_tensor(output_details[0]['index'])
-                y_pred[j+i*len(input_data)] = output_data
-                #print(output_data)
+                y_pred[j+i*len(input_data)] = output_data.astype('float32')
 
                 # Update display
                 index = i+1
