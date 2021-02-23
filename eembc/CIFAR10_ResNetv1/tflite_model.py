@@ -51,9 +51,9 @@ class TfliteModel():
         input_details = self.interpreter.get_input_details()
         output_details = self.interpreter.get_output_details()
 
-        # Get quantization details, necessary for proper input/output scaling
-        input_gain, input_offset = input_details[0]['quantization']
-        output_gain, output_offset = output_details[0]['quantization']
+        # Get quantization details, necessary for proper input/output scaling and offset (zero point)
+        input_scaler, input_zero_point = input_details[0]['quantization']
+        output_scaler, output_zero_point = output_details[0]['quantization']
 
         # Allocate the output vector
         y_pred = np.zeros((x_test.shape[0],output_details[0]['shape'][1]),dtype='float32')
@@ -64,8 +64,8 @@ class TfliteModel():
         print('\n'+text.format(index=0,ll=int(len(x_test)/batch_size))+ '[' + '>' + '.'*bar_n + ']', end='', flush=True)
         t = time.time()
         for i in range(len(x_test)):
-            # Get input data (in correct INT8 range)
-            input_data = ((x_test[i][np.newaxis] / input_gain) + input_offset).astype('int8')
+            # Get data and apply optimal quantization
+            input_data = ((x_test[i][np.newaxis] / input_scaler) + input_zero_point).astype('int8')
 
             # Run model on data
             self.interpreter.set_tensor(input_details[0]['index'], input_data)
@@ -92,6 +92,6 @@ class TfliteModel():
 
         print('\n')
 
-        # Scale to match floating point range for test functions
-        return (y_pred - output_offset) * output_gain
+        # Scale to match floating point range
+        return (y_pred - output_zero_point) * output_scaler
 

@@ -52,9 +52,9 @@ class TfliteModel():
         input_details = self.interpreter.get_input_details()
         output_details = self.interpreter.get_output_details()
 
-        # Get quantization details, necessary for proper input/output scaling
-        input_gain, input_offset = input_details[0]['quantization']
-        output_gain, output_offset = output_details[0]['quantization']
+        # Get quantization details, necessary for proper input/output scaling and offset (zero point)
+        input_scaler, input_zero_point = input_details[0]['quantization']
+        output_scaler, output_zero_point = output_details[0]['quantization']
 
         # Allocate the output vector
         y_pred = np.zeros(np.append(x_test.x.shape[0],output_details[0]['shape'][1:]),dtype='float32')
@@ -71,7 +71,7 @@ class TfliteModel():
             for j in range(len(input_data)):
 
                 # Get data and apply optimal quantization
-                scaled_input = (input_data[j] / input_gain) + input_offset
+                scaled_input = (input_data[j] / input_scaler) + input_zero_point
                 self.interpreter.set_tensor(input_details[0]['index'], scaled_input[np.newaxis].astype('int8'))
 
                 # Run model on data
@@ -98,5 +98,5 @@ class TfliteModel():
         print('\n')
 
         # Scale to right quantization
-        return (y_pred - output_offset) * output_gain
+        return (y_pred - output_zero_point) * output_scaler
 
