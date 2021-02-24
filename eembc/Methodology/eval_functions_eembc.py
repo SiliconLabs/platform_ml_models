@@ -201,7 +201,7 @@ def calculate_ae_auc(y_pred, y_true, name):
   print(f"Simplified roc_auc = {roc_auc:.3f}")               
 
   plt.figure()
-  plt.plot(tpr, fpr, label=f"auc: {roc_auc:0.3f}")
+  plt.plot(fpr, tpr, label=f"auc: {roc_auc:0.3f}")
   plt.xlim([0.0, 1.0])
   plt.ylim([0.0, 1.0])
   plt.legend(loc="lower right")
